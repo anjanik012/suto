@@ -62,8 +62,8 @@ void device_discovery::handle_receive(const boost::system::error_code &ec, std::
         string ip_remote = receive_addr.address().to_string();
         std::cout << "Received bytes:-" << bytes_transferred << " from:-" << ip_remote << std::endl;
         if (reply == UDP_HELLO_REPLY) {
-            stop();
             std::cout << reply << std::endl;
+            stop();
         }
     }
 }
