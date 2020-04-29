@@ -60,10 +60,9 @@ void device_discovery::handle_receive(const boost::system::error_code &ec, std::
     if (!ec) {
         string reply(receive_buffer.begin(), receive_buffer.end());
         string ip_remote = receive_addr.address().to_string();
-        std::cout << "Received bytes:-" << bytes_transferred << " from:-" << ip_remote << std::endl;
         if (reply == UDP_HELLO_REPLY) {
-            std::cout << reply << std::endl;
             stop();
+            m_callback->device_detected(receive_addr, bytes_transferred);
         }
     }
 }
@@ -72,5 +71,9 @@ void device_discovery::stop() {
     send_socket.close();
     receive_socket.close();
     service.stop();
+}
+
+void device_discovery::set_callback(device_detection_callback *callback) {
+    m_callback = callback;
 }
 

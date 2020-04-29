@@ -1,7 +1,7 @@
 #include <iostream>
 #include <boost/asio/io_service.hpp>
 
-#include "device_discovery.h"
+#include "connection.h"
 
 using std::cout;
 using std::cin;
@@ -10,7 +10,7 @@ using namespace boost::asio;
 
 int main() {
     io_service service;
-    device_discovery finder(service);
-    finder.start();
+    connection m_connection(service);
+    m_connection.start();
     return 0;
 }

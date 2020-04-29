@@ -11,6 +11,8 @@
 #include <boost/bind/bind.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio/ip/network_v4.hpp>
+
+#include "device_detection_callback.h"
 #include <iostream>
 #include <array>
 
@@ -32,6 +34,8 @@ private:
     bool receive_broadcast_reply(ip::udp::endpoint &);
     void handle_send(const boost::system::error_code &, std::size_t);
     void handle_receive(const boost::system::error_code &, std::size_t);
+
+    device_detection_callback *m_callback;
 public:
     explicit device_discovery(io_service &serv):service(serv), send_socket(serv), receive_socket(serv) {
         broadcast_addr = ip::udp::endpoint(ip::network_v4().broadcast(), SEND_PORT);
@@ -40,6 +44,9 @@ public:
 
     void start();
     void stop();
+
+    void set_callback(device_detection_callback *);
+
     ~device_discovery() {
         send_socket.close();
         receive_socket.close();
