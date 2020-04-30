@@ -30,5 +30,13 @@ print("Waiting For TCP...")
 connection, client_address = sock.accept()
 print("connected", client_address)
 time.sleep(1)
-sock.close()
-server.close()
+try:
+    while True:
+        print("Listening on connection..")
+        message = connection.recv(100)
+        print(message)
+        time.sleep(1)
+finally:
+    sock.close()
+    server.close()
+    client.close()
