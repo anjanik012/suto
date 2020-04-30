@@ -25,7 +25,10 @@ sock.listen(1)
 
 time.sleep(1)
 server.sendto(b"SUTO_UDP_HELLO_REPLY", (ip_addr, 2021))
-while True:
-    print("Waiting For TCP...")
-    connection, client_address = sock.accept()
-    time.sleep(1)
+
+print("Waiting For TCP...")
+connection, client_address = sock.accept()
+print("connected", client_address)
+time.sleep(1)
+sock.close()
+server.close()
