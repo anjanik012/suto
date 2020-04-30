@@ -70,7 +70,7 @@ void device_discovery::handle_receive(const boost::system::error_code &ec, std::
 void device_discovery::stop() {
     send_socket.close();
     receive_socket.close();
-    service.stop();
+//    service.stop();
 }
 
 void device_discovery::set_callback(device_detection_callback *callback) {

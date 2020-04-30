@@ -14,12 +14,12 @@ void tcp_connector::start() {
     std::cout << "Starting a tcp connection with the reply device" << std::endl;
     is_started = true;
     m_socket.open(tcp::v4());
-    if (connect_to_device()) {
-        std::cout << "Connection request made" << std::endl;
-        m_service.run();
+    bool res = connect_to_device();
+    m_service.run();
+    if (res) {
+        std::cout << "TCP connection request made" << std::endl;
     } else {
-        std::cout << "Failed to start:-" << std::endl;
-        m_socket.close();
+        std::cout << "Failed to make TCP connection request" << std::endl;
     }
 }
 
