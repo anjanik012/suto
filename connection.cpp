@@ -7,6 +7,7 @@
 
 void connection::start() {
     m_finder.set_callback(this);
+    m_connection.set_connector_callback(this);
     m_finder.start();
 }
 
@@ -19,7 +20,6 @@ void connection::device_detected(ip::udp::endpoint &remote, std::size_t bytes_re
     std::cout << "Bytes received:-" << bytes_received << std::endl;
 
     m_connection.set_endpoint(remote);
-    m_connection.set_connector_callback(this);
     m_connection.start();
 }
 
