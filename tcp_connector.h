@@ -10,6 +10,8 @@
 #include <boost/asio/ip/udp.hpp>
 #include <boost/asio/placeholders.hpp>
 
+#include "tcp_connector_callback.h"
+
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
@@ -27,12 +29,18 @@ private:
 
     bool connect_to_device();
     void connect_handler(const boost::system::error_code &);
+
+    tcp_connector_callback *m_callback = nullptr;
 public:
     explicit tcp_connector(io_service &serv): m_service(serv), m_socket(serv) {}
     void set_endpoint(udp::endpoint &endpoint);
+    void set_connector_callback(tcp_connector_callback *);
 
     void start();
     void stop();
+
+    std::string get_remote_address();
+    bool write_data(const std::string &);
 };
 
 

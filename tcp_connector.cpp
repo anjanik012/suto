@@ -37,7 +37,7 @@ bool tcp_connector::connect_to_device() {
 void tcp_connector::connect_handler(const boost::system::error_code &error) {
     if (!error) {
         is_connected = true;
-        std::cout << "TCP connection made" << std::endl;
+        m_callback->tcp_connection_established();
     } else {
         std::cout << "TCP connection failed" << std::endl;
     }
@@ -47,6 +47,20 @@ void tcp_connector::stop() {
     m_socket.close();
     m_service.stop();
     is_started = is_connected = false;
+}
+
+void tcp_connector::set_connector_callback(tcp_connector_callback *callback) {
+    m_callback = callback;
+}
+
+std::string tcp_connector::get_remote_address() {
+    return m_remote.address().to_string();
+}
+
+bool tcp_connector::write_data(const std::string &data) {
+    boost::system::error_code ec;
+    auto bytes = m_socket.write_some(buffer(data), ec);
+    return (!ec)? true : false;
 }
 
 

@@ -18,8 +18,18 @@ void connection::device_detected(ip::udp::endpoint &remote, std::size_t bytes_re
     std::cout << "Reply received from:-" << remote.address().to_string() << std::endl;
     std::cout << "Bytes received:-" << bytes_received << std::endl;
 
-    tcp_connector connector(service);
-    connector.set_endpoint(remote);
-    connector.start();
+    m_connection.set_endpoint(remote);
+    m_connection.set_connector_callback(this);
+    m_connection.start();
+}
+
+void connection::tcp_connection_established() {
+    std::cout << "TCP connection established with " << m_connection.get_remote_address() << std::endl;
+    bool res = m_connection.write_data("Hello There!!!");
+    if (res) {
+        std::cout << "Data Written" << std::endl;
+    } else {
+        std::cerr << "Data writing failed" << std::endl;
+    }
 }
 
