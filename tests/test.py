@@ -3,11 +3,11 @@ import time
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
                        socket.IPPROTO_UDP)  # UDP
-
-server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-server.settimeout(0.2)
+#
+# server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+# server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+# server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+# server.settimeout(0.2)
 client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
 
 client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -20,23 +20,24 @@ while True:
 
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.bind(("0.0.0.0", 2022))
-sock.listen(1)
+# sock.bind(("0.0.0.0", 2022))
+# sock.listen(1)
 
 time.sleep(1)
-server.sendto(b"SUTO_UDP_HELLO_REPLY", (ip_addr, 2021))
+# server.sendto(b"SUTO_UDP_HELLO_REPLY", (ip_addr, 2021))
 
-print("Waiting For TCP...")
-connection, client_address = sock.accept()
-print("connected", client_address)
+print("Connecting For TCP...")
+# connection, client_address = sock.accept()
+sock.connect((ip_addr, 2021))
+print("connected", ip_addr)
 time.sleep(1)
 try:
     while True:
         print("Listening on connection..")
-        message = connection.recv(100)
+        message = sock.recv(100)
         print(message)
         time.sleep(1)
 finally:
     sock.close()
-    server.close()
+    # server.close()
     client.close()

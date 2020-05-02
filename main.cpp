@@ -1,7 +1,6 @@
-#include <iostream>
 #include <boost/asio/io_service.hpp>
 
-#include "connection.h"
+#include "fast_connection.h"
 
 using std::cout;
 using std::cin;
@@ -10,7 +9,7 @@ using namespace boost::asio;
 
 int main() {
     io_service service;
-    connection m_connection(service);
-    m_connection.start();
+    fast_connection connection(service);
+    connection.start();
     return 0;
 }

@@ -13,5 +13,5 @@ ENDIF(Boost_FOUND)
 
 SET(USED_LIBS ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_REGEX_LIBRARY})
 
-add_executable(suto main.cpp device_discovery.cpp device_discovery.h device_detection_callback.h connection.cpp connection.h tcp_connector.cpp tcp_connector.h tcp_connector_callback.h)
+add_executable(suto main.cpp fast_connection.cpp fast_connection.h)
 TARGET_LINK_LIBRARIES(suto ${USED_LIBS})
