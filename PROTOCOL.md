@@ -1,4 +1,4 @@
-Version 1.1
+Version 1.2
 
 ## For establishing connection between desktop and client.
 
@@ -12,18 +12,20 @@ with _TCP_ with the dedsktop on port _2021_.
 ### Message types
 
 `SUTO_C_GET_SALT` - Sent by Android client to desktop after successfull _TCP_ connection. This message requests the 
-Linux passwaord salt of the user. This is one-time only. The android client should save this for later use.
+Linux passwaord salt of the user. This is one-time only. The android client should save this for later use. This is 
+required for regenerating the password hash of the user trying to authenticate on Android client.
 
-`SUTO_SALT_%s` - Sent by desktop upon salt request. _%s_ is a placeholder which will be replaced by the salt.
+`SUTO_SALT_%s` - Sent by desktop upon password salt request. _%s_ is a placeholder which will be replaced by the salt.
 
-`SUTO_C_GET_RSTRING` - Sent by Android client to desktop after ensuring that it has password salt. This message requests
-the random string from the desktop.
+`SUTO_C_GET_RSALT` - Sent by Android client to desktop after ensuring that it has password salt. This message requests
+the random salt from the desktop to make a new salted hash of the password hash on android client.
 
-`SUTO_RSTRING_%s` - Sent by desktop upon random string request. _%s_ is a placeholder which will be replaced by the 
-random string. 
+`SUTO_RSALT_%s` - Sent by desktop upon random string request. _%s_ is a placeholder which will be replaced by the 
+random salt. 
 
 `SUTO_C_F_HASH_%s` - Sent by the client for authentication. _%s_ is a placeholder which will be replaced by the final 
-_sha512_ hash of _password hash + Random String_.
+hash of _password hash_ with salt _random salt_ received by desktop. The final hash must be generated only using a hash
+function based on _glibc's_ `crypt()` function which is the standard function for calculating password hash on UNIX. 
 
 ## Authentication done.
 
