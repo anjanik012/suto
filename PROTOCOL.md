@@ -23,7 +23,7 @@ the random string from the desktop.
 random string. 
 
 `SUTO_C_F_HASH_%s` - Sent by the client for authentication. _%s_ is a placeholder which will be replaced by the final 
-_sha256_ hash of _password hash + Random String_.
+_sha512_ hash of _password hash + Random String_.
 
 ## Authentication done.
 
