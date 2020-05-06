@@ -1,5 +1,8 @@
 import socket
 import time
+import crypt
+
+password = "shailesh"
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
                        socket.IPPROTO_UDP)  # UDP
@@ -32,11 +35,26 @@ sock.connect((ip_addr, 2021))
 print("connected", ip_addr)
 time.sleep(1)
 try:
-    while True:
-        print("Listening on connection..")
-        message = sock.recv(100)
-        print(message)
-        time.sleep(1)
+    sock.sendall(b"SUTO_C_GET_SALT")
+    print("Sent SUTO_C_GET_SALT")
+    linux_salt = sock.recv(1024)[10:]
+    print(f"Received salt {linux_salt}")
+    sock.sendall(b"SUTO_C_GET_RSALT")
+    print("Sent SUTO_C_GET_RSALT")
+    rsalt = sock.recv(1024)[11:]
+    print(f"Received rsalt:{rsalt}")
+    linuxpwhash = crypt.crypt(password, salt=linux_salt)
+    print(f"linux hash is {linuxpwhash}")
+    phash = crypt.crypt(linuxpwhash, salt=rsalt)
+    sock.sendall(b"SUTO_C_F_HASH_"+phash)
+    print(f"Sent final hash: {phash}")
+    final_message = sock.recv(1024)
+    if final_message == "SUTO_AUTH_SUCCESS":
+        print("Success")
+    elif final_message == "SUTO_AUTH_FAILED":
+        print("Failed")
+    else:
+        print("Error")
 finally:
     sock.close()
     # server.close()
