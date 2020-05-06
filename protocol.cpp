@@ -139,4 +139,5 @@ void protocol::send_auth_msg(bool auth_type) {
     } else {
         std::cerr << "PROTOCOL: Failed to sent auth message...something went wrong" << std::endl;
     }
+    m_socket->close();
 }

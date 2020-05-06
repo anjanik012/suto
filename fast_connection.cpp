@@ -69,7 +69,6 @@ void fast_connection::tcp_connection_established(const boost::system::error_code
             std::cerr << "TCP: oops!!! socket got closed somehow :(" << std::endl;
         }
         p.start_auth_job();
-        service.run();
     }
 }
 
