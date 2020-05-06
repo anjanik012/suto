@@ -18,7 +18,7 @@ using std::string;
 
 class protocol {
 private:
-stack<string> steps;
+stack<string, capacity<10>> steps;
 const string GET_SALT = "SUTO_C_GET_SALT";
 const string GET_RSALT = "SUTO_C_GET_RSALT";
 const string GET_FHASH = "SUTO_C_F_HASH";
