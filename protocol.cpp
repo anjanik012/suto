@@ -21,7 +21,7 @@ bool protocol::validate_msg() {
     bool ans = false;
     string step;
     steps.pop(step);
-    if (read_buffer.find(step) != string::npos && step != GET_FHASH) {
+    if (read_buffer.find(step) != string::npos) {
         ans = true;
     }
     return ans;
@@ -63,10 +63,12 @@ bool protocol::start_read() {
 bool protocol::start_write() {
     try {
         string reply;
-        if (read_buffer.find(GET_SALT) == string::npos) {
-            reply = salter.get_salt(15);
-        } else if (read_buffer.find(GET_RSALT) == string::npos) {
-            reply = salter.get_salt(15);
+        if (read_buffer.find(GET_SALT) != string::npos) {
+            reply = "SUTO_SALT_";
+            reply += salter.get_salt(15);
+        } else if (read_buffer.find(GET_RSALT) != string::npos) {
+            reply = "SUTO_RSALT_";
+            reply += salter.get_salt(15);
         }
         m_socket->async_write_some(buffer(reply), boost::bind(
                 &protocol::write_handler, this,
@@ -82,9 +84,11 @@ void protocol::read_handler(const boost::system::error_code &ec, std::size_t byt
     if (!ec) {
         std::cout << "PROTOCOL: message received:-" << read_buffer << std::endl;
         if (!steps.empty()) {
-            if (validate_msg()) {
+            if (validate_msg() && (read_buffer.find(GET_FHASH) == string::npos)) {
                 std::cout << "PROTOCOL: Message validated...sending reply" << std::endl;
                 start_write();
+            } else if (read_buffer.find(GET_FHASH) != string::npos){
+                std::cout << "PROTOCOL: Final hash received" << std::endl;
             } else {
                 std::cerr << "PROTOCOL: Unknown message received...stopping :|" << std::endl;
             }
