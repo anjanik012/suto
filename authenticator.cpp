@@ -3,12 +3,6 @@
 //
 
 #include "authenticator.h"
-#include <crypt.h>
-#include <iostream>
-
-std::string authenticator::get_salt() {
-    return password_salt;
-}
 
 authenticator::authenticator() : m_random_salt() {
     password_salt = "$6$covunfW1Qv6z7AfS";
@@ -19,9 +13,13 @@ authenticator::authenticator() : m_random_salt() {
 
 bool authenticator::check_hash(const std::string &received_hash) {
     auto hash_2 = crypt(password_hash.c_str(), random_salt_str.c_str());
-    const std::string hash_2_str = std::string(hash_2);
+    auto hash_2_str = std::string(hash_2);
     std::cout << "AUTHENTICATOR: recalculated hash:- " << hash_2_str << std::endl;
     return hash_2_str == received_hash;
+}
+
+std::string authenticator::get_salt() {
+    return password_salt;
 }
 
 std::string authenticator::get_random_salt() {

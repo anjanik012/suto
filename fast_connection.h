@@ -10,6 +10,9 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/network_v4.hpp>
+#include <boost/bind.hpp>
+#include <boost/asio/placeholders.hpp>
+#include <boost/asio/deadline_timer.hpp>
 
 #include "protocol.h"
 
@@ -26,24 +29,22 @@ private:
 
     udp::socket broadcast_socket;
     udp::endpoint broadcast_addr;
+
     bool send_broadcast();
+
     void broadcast_handle(const boost::system::error_code &, std::size_t);
 
     tcp::socket m_socket;
     tcp::endpoint listener_endpoint;
     tcp::acceptor acceptor;
+
     bool listen_for_tcp();
+
     void tcp_connection_established(const boost::system::error_code &);
 
     protocol p;
 public:
-    explicit fast_connection(io_service &serv) :
-            service(serv), broadcast_socket(serv),
-            m_socket(serv),
-            acceptor(serv, tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT)) {
-        broadcast_addr = udp::endpoint(network_v4().broadcast(), UDP_BROADCAST_PORT);
-        listener_endpoint = tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT);
-    }
+    explicit fast_connection(io_service &);
 
     void start();
 

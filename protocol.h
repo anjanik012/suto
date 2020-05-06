@@ -23,14 +23,19 @@ private:
     const string GET_SALT = "SUTO_C_GET_SALT";
     const string GET_RSALT = "SUTO_C_GET_RSALT";
     const string GET_FHASH = "SUTO_C_F_HASH";
+
     const string AUTH_SUCCESS = "SUTO_AUTH_SUCCESS";
     const string AUTH_FAILED = "SUTO_AUTH_FAILED";
+
+    string read_buffer;
+
+    authenticator m_authenticator;
+
+    tcp::socket *m_socket;
 
     bool start_read();
 
     bool start_write();
-
-    string read_buffer, rsalt;
 
     void read_handler(const boost::system::error_code &, std::size_t);
 
@@ -40,9 +45,6 @@ private:
 
     void send_auth_msg(bool);
 
-    authenticator m_authenticator;
-
-    tcp::socket *m_socket;
 public:
     protocol();
 

@@ -6,6 +6,8 @@
 #define SUTO_AUTHENTICATOR_H
 
 #include <string>
+#include <crypt.h>
+#include <iostream>
 #include "random_salt.h"
 
 class authenticator {

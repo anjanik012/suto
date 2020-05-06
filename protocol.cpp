@@ -18,27 +18,6 @@ protocol::protocol() : steps(), m_authenticator() {
     read_buffer.resize(200);
 }
 
-bool protocol::validate_msg() {
-    bool ans = false;
-    string step;
-    steps.pop(step);
-    if (read_buffer.find(step) != string::npos) {
-        ans = true;
-    }
-    return ans;
-}
-
-bool protocol::set_tcp_socket(tcp::socket *socket) {
-    bool ans;
-    if (socket->is_open()) {
-        m_socket = socket;
-        ans = true;
-    } else {
-        ans = false;
-    }
-    return ans;
-}
-
 void protocol::start_auth_job() {
     bool read_status = start_read();
     if (read_status) {
@@ -46,7 +25,6 @@ void protocol::start_auth_job() {
     } else {
         std::cout << "PROTOCOL: Can't read :(" << std::endl;
     }
-
 }
 
 bool protocol::start_read() {
@@ -62,31 +40,12 @@ bool protocol::start_read() {
     return true;
 }
 
-bool protocol::start_write() {
-    try {
-        string reply;
-        if (read_buffer == GET_SALT) {
-            reply = "SUTO_SALT_";
-            reply += m_authenticator.get_salt();
-        } else if (read_buffer == GET_RSALT) {
-            reply = "SUTO_RSALT_";
-            reply += m_authenticator.get_random_salt();
-        }
-        m_socket->async_write_some(buffer(reply), boost::bind(
-                &protocol::write_handler, this,
-                placeholders::error,
-                placeholders::bytes_transferred));
-    } catch (boost::system::system_error &error) {
-        return false;
-    }
-    return true;
-}
-
 void protocol::read_handler(const boost::system::error_code &ec, std::size_t bytes) {
     if (!ec) {
         read_buffer.erase(std::remove_if(read_buffer.begin(), read_buffer.end(),
                                          [](char c) {
-                                             return !std::isalnum(c) && (c != '.') && (c != '/') && (c != '_') && (c != '$');
+                                             return !std::isalnum(c) && (c != '.') && (c != '/') && (c != '_') &&
+                                                    (c != '$');
                                          }),
                           read_buffer.end());
         std::cout << "PROTOCOL: message received:-" << read_buffer << std::endl;
@@ -114,6 +73,26 @@ void protocol::read_handler(const boost::system::error_code &ec, std::size_t byt
     }
 }
 
+bool protocol::start_write() {
+    try {
+        string reply;
+        if (read_buffer == GET_SALT) {
+            reply = "SUTO_SALT_";
+            reply += m_authenticator.get_salt();
+        } else if (read_buffer == GET_RSALT) {
+            reply = "SUTO_RSALT_";
+            reply += m_authenticator.get_random_salt();
+        }
+        m_socket->async_write_some(buffer(reply), boost::bind(
+                &protocol::write_handler, this,
+                placeholders::error,
+                placeholders::bytes_transferred));
+    } catch (boost::system::system_error &error) {
+        return false;
+    }
+    return true;
+}
+
 void protocol::write_handler(const boost::system::error_code &ec, std::size_t bytes) {
     if (!ec) {
         std::cout << "PROTOCOL: Messgage sent :)...Waiting for next message" << std::endl;
@@ -121,6 +100,27 @@ void protocol::write_handler(const boost::system::error_code &ec, std::size_t by
     } else {
         std::cerr << "PROTOCOL: Failed sending message :(" << std::endl;
     }
+}
+
+bool protocol::validate_msg() {
+    bool ans = false;
+    string step;
+    steps.pop(step);
+    if (read_buffer.find(step) != string::npos) {
+        ans = true;
+    }
+    return ans;
+}
+
+bool protocol::set_tcp_socket(tcp::socket *socket) {
+    bool ans;
+    if (socket->is_open()) {
+        m_socket = socket;
+        ans = true;
+    } else {
+        ans = false;
+    }
+    return ans;
 }
 
 void protocol::send_auth_msg(bool auth_type) {

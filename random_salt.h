@@ -16,7 +16,8 @@ private:
     random_device rng;
     uniform_int_distribution<uint8_t> dist;
 public:
-    random_salt(): dist(0, 63){}
+    random_salt() : dist(0, 63) {}
+
     std::string get_salt(uint8_t);
 };
 
