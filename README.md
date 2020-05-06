@@ -15,4 +15,6 @@ port _2020_ and listens for _TCP_ connection on sender port _2021_ asynchronousl
 * **TCP connection established with detected device**- The device upon receiving the broadcast message attempts to connect
 with the desktop over _TCP_ and succeeds.
 
+* **Authentication Protocol works** - The implementation of protocol in file `PROTOCOL.md` works. 
+
 * **Sample test**- A test is written in python which mimics the behaviour of actual android client yet to be written.
