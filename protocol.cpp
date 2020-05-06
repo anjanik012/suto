@@ -86,7 +86,7 @@ void protocol::read_handler(const boost::system::error_code &ec, std::size_t byt
     if (!ec) {
         read_buffer.erase(std::remove_if(read_buffer.begin(), read_buffer.end(),
                                          [](char c) {
-                                             return !std::isalnum(c) && (c != '.') && (c != '/') && (c != '_');
+                                             return !std::isalnum(c) && (c != '.') && (c != '/') && (c != '_') && (c != '$');
                                          }),
                           read_buffer.end());
         std::cout << "PROTOCOL: message received:-" << read_buffer << std::endl;

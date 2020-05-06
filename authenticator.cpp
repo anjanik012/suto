@@ -11,8 +11,8 @@ std::string authenticator::get_salt() {
 }
 
 authenticator::authenticator() : m_random_salt() {
-    password_salt = "ABCDabcd./";
-    random_salt_str = m_random_salt.get_salt(15);
+    password_salt = "$6$covunfW1Qv6z7AfS";
+    random_salt_str = "$6$" + m_random_salt.get_salt(16);
     auto hash = crypt("shailesh", password_salt.c_str());
     password_hash = std::string(hash);
 }
