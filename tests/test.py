@@ -48,7 +48,7 @@ try:
     phash = crypt.crypt(linuxpwhash, salt=rsalt)
     sock.sendall(bytes("SUTO_C_F_HASH_"+phash, "utf-8"))
     print(f"Sent final hash: {phash}")
-    final_message = sock.recv(102400)
+    final_message = sock.recv(102400).decode("utf-8")
     if final_message == "SUTO_AUTH_SUCCESS":
         print("Success")
     elif final_message == "SUTO_AUTH_FAILED":
