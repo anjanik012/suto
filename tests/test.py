@@ -37,18 +37,18 @@ time.sleep(1)
 try:
     sock.sendall(b"SUTO_C_GET_SALT")
     print("Sent SUTO_C_GET_SALT")
-    linux_salt = sock.recv(1024)[10:]
+    linux_salt = sock.recv(102400)[10:].decode("utf-8")
     print(f"Received salt {linux_salt}")
     sock.sendall(b"SUTO_C_GET_RSALT")
     print("Sent SUTO_C_GET_RSALT")
-    rsalt = sock.recv(1024)[11:]
+    rsalt = sock.recv(102400)[11:].decode("utf-8")
     print(f"Received rsalt:{rsalt}")
     linuxpwhash = crypt.crypt(password, salt=linux_salt)
     print(f"linux hash is {linuxpwhash}")
     phash = crypt.crypt(linuxpwhash, salt=rsalt)
-    sock.sendall(b"SUTO_C_F_HASH_"+phash)
+    sock.sendall(bytes("SUTO_C_F_HASH_"+phash, "utf-8"))
     print(f"Sent final hash: {phash}")
-    final_message = sock.recv(1024)
+    final_message = sock.recv(102400)
     if final_message == "SUTO_AUTH_SUCCESS":
         print("Success")
     elif final_message == "SUTO_AUTH_FAILED":
