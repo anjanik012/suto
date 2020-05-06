@@ -14,6 +14,7 @@ protocol::protocol() : steps(), salter() {
     steps.push(GET_RSALT);
     steps.push(GET_SALT);
     m_socket = nullptr;
+    read_buffer.resize(200);
 }
 
 bool protocol::validate_msg() {
@@ -40,16 +41,16 @@ bool protocol::set_tcp_socket(tcp::socket *socket) {
 void protocol::start_auth_job() {
     bool read_status = start_read();
     if (read_status) {
-        std::cout << "PROTOCOL: Waiting for message:-" << std::endl;
+        std::cout << "PROTOCOL: Waiting for message" << std::endl;
     } else {
-        std::cout << "PROTOCOL: Can't read:- :(" << std::endl;
+        std::cout << "PROTOCOL: Can't read :(" << std::endl;
     }
 
 }
 
 bool protocol::start_read() {
     try {
-        m_socket->async_read_some(buffer(read_buffer), boost::bind(
+        m_socket->async_read_some(buffer(read_buffer, read_buffer.size()), boost::bind(
                 &protocol::read_handler, this,
                 placeholders::error,
                 placeholders::bytes_transferred));
