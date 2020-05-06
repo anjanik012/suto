@@ -35,7 +35,7 @@ bool fast_connection::send_broadcast() {
 
 void fast_connection::broadcast_handle(const boost::system::error_code &ec, std::size_t bytes_transferred) {
     if (!ec) {
-        std::cout << "Sent Broadcast with message:-" << UDP_HELLO << std::endl;
+        std::cout << "UDP: Sent Broadcast with message:-" << UDP_HELLO << std::endl;
         deadline_timer timer(service, boost::posix_time::seconds(3));
         timer.wait();
         send_broadcast();
@@ -50,7 +50,7 @@ void fast_connection::stop() {
 bool fast_connection::listen_for_tcp() {
     try {
         acceptor.listen();
-        acceptor.async_accept(m_socket, boost::bind(&fast_connection::tcp_connection_handler, this,
+        acceptor.async_accept(m_socket, boost::bind(&fast_connection::tcp_connection_established, this,
                 boost::asio::placeholders::error));
     } catch (boost::system::system_error &ec) {
         return false;
@@ -58,15 +58,17 @@ bool fast_connection::listen_for_tcp() {
     return true;
 }
 
-void fast_connection::tcp_connection_handler(const boost::system::error_code &ec) {
+void fast_connection::tcp_connection_established(const boost::system::error_code &ec) {
     if (!ec) {
         stop();
-        std::cout << "TCP connection established with:-" << m_socket.remote_endpoint().address().to_string() << std::endl;
-        boost::system::error_code e;
-        m_socket.write_some(buffer("Hello there!!!"), e);
-        if (!e) {
-           std::cout << "TCP: Data written:- Hello there!!!" << std::endl;
+        std::cout << "TCP: Connection established with:-" << m_socket.remote_endpoint().address().to_string() << std::endl;
+        if (p.set_tcp_socket(&m_socket)) {
+            std::cout << "TCP: Socket passed to protocol for further processing" << std::endl;
+        } else {
+            std::cerr << "TCP: oops!!! socket got closed somehow :(" << std::endl;
         }
+        p.start_auth_job();
+        service.run();
     }
 }
 

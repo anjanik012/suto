@@ -13,5 +13,5 @@ ENDIF(Boost_FOUND)
 
 SET(USED_LIBS ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_RANDOM_LIBRARY})
 
-add_executable(suto main.cpp fast_connection.cpp fast_connection.h random_salt.cpp random_salt.h)
+add_executable(suto main.cpp fast_connection.cpp fast_connection.h random_salt.cpp random_salt.h protocol.cpp protocol.h)
 TARGET_LINK_LIBRARIES(suto ${USED_LIBS})

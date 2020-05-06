@@ -11,6 +11,8 @@
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/network_v4.hpp>
 
+#include "protocol.h"
+
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
@@ -31,7 +33,9 @@ private:
     tcp::endpoint listener_endpoint;
     tcp::acceptor acceptor;
     bool listen_for_tcp();
-    void tcp_connection_handler(const boost::system::error_code &);
+    void tcp_connection_established(const boost::system::error_code &);
+
+    protocol p;
 public:
     explicit fast_connection(io_service &serv) :
             service(serv), broadcast_socket(serv),
