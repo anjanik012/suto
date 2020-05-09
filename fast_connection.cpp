@@ -68,6 +68,7 @@ void fast_connection::tcp_connection_established(const boost::system::error_code
         } else {
             std::cerr << "TCP: oops!!! socket got closed somehow :(" << std::endl;
         }
+        p.set_auth_completion_callback(this);
         p.start_auth_job();
     }
 }
@@ -76,6 +77,15 @@ void fast_connection::stop() {
     broadcast_socket.close();
 //    m_socket.close();
 }
+
+void fast_connection::on_auth_complete() {
+    is_auth_success = true;
+}
+
+bool fast_connection::get_auth_status() {
+    return is_auth_success;
+}
+
 
 
 

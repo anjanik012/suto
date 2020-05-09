@@ -123,6 +123,10 @@ bool protocol::set_tcp_socket(tcp::socket *socket) {
     return ans;
 }
 
+void protocol::set_auth_completion_callback(auth_complete_callback *cb) {
+    m_callback = cb;
+}
+
 void protocol::send_auth_msg(bool auth_type) {
     boost::system::error_code ec;
     if (auth_type) {
@@ -133,6 +137,7 @@ void protocol::send_auth_msg(bool auth_type) {
     if (!ec) {
         if (auth_type) {
             std::cout << "PROTOCOL: Sent " << AUTH_SUCCESS << std::endl;
+            m_callback->on_auth_complete();
         } else {
             std::cout << "PROTOCOL: Sent " << AUTH_FAILED << std::endl;
         }

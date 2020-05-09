@@ -15,11 +15,12 @@
 #include <boost/asio/deadline_timer.hpp>
 
 #include "protocol.h"
+#include "auth_complete_callback.h"
 
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
-class fast_connection {
+class fast_connection : public auth_complete_callback {
 private:
     io_service &service;
     static const int UDP_BROADCAST_PORT = 2020;
@@ -43,12 +44,18 @@ private:
     void tcp_connection_established(const boost::system::error_code &);
 
     protocol p;
+
+    bool is_auth_success = false;
+
+    void on_auth_complete() override;
 public:
     explicit fast_connection(io_service &);
 
     void start();
 
     void stop();
+
+    bool get_auth_status();
 };
 
 

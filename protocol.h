@@ -12,6 +12,7 @@
 
 #include "random_salt.h"
 #include "authenticator.h"
+#include "auth_complete_callback.h"
 
 using namespace boost::lockfree;
 using namespace boost::asio::ip;
@@ -30,6 +31,7 @@ private:
     string read_buffer;
 
     authenticator m_authenticator;
+    auth_complete_callback *m_callback;
 
     tcp::socket *m_socket;
 
@@ -49,6 +51,7 @@ public:
     protocol();
 
     bool set_tcp_socket(tcp::socket *);
+    void set_auth_completion_callback(auth_complete_callback *);
 
     void start_auth_job();
 };
