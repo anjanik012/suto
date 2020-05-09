@@ -14,5 +14,5 @@ ENDIF(Boost_FOUND)
 SET(USED_LIBS ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_RANDOM_LIBRARY} crypt)
 SET(CMAKE_CXX_FLAGS "-fPIC -fno-stack-protector")
 
-add_library(suto_pam STATIC fast_connection.cpp fast_connection.h random_salt.cpp random_salt.h protocol.cpp protocol.h authenticator.cpp authenticator.h suto_pam.cpp auth_complete_callback.h)
+add_library(suto_pam SHARED fast_connection.cpp fast_connection.h random_salt.cpp random_salt.h protocol.cpp protocol.h authenticator.cpp authenticator.h suto_pam.cpp auth_complete_callback.h)
 TARGET_LINK_LIBRARIES(suto_pam ${USED_LIBS})
