@@ -47,8 +47,10 @@ private:
 
     void send_auth_msg(bool);
 
+    void *m_user_to_auth;
+
 public:
-    protocol();
+    explicit protocol(void *);
 
     bool set_tcp_socket(tcp::socket *);
     void set_auth_completion_callback(auth_complete_callback *);

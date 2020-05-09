@@ -8,10 +8,11 @@
 
 const std::string fast_connection::UDP_HELLO = "SUTO_UDP_HELLO";
 
-fast_connection::fast_connection(io_service &serv) :
+fast_connection::fast_connection(io_service &serv, void *user) :
         service(serv), broadcast_socket(serv),
         m_socket(serv),
-        acceptor(serv, tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT)) {
+        acceptor(serv, tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT)),
+        p(user){
     broadcast_addr = udp::endpoint(network_v4().broadcast(), UDP_BROADCAST_PORT);
     listener_endpoint = tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT);
 }
@@ -84,6 +85,10 @@ void fast_connection::on_auth_complete() {
 
 bool fast_connection::get_auth_status() {
     return is_auth_success;
+}
+
+void fast_connection::set_user_to_auth(void *user) {
+    user_to_auth = user;
 }
 
 

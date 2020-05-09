@@ -9,6 +9,7 @@
 #include <crypt.h>
 #include <iostream>
 #include "random_salt.h"
+#include <shadow.h>
 
 class authenticator {
 private:
@@ -17,8 +18,10 @@ private:
     std::string random_salt_str;
 
     random_salt m_random_salt;
+
+    struct spwd *m_user;
 public:
-    authenticator();
+    explicit authenticator(void *);
 
     std::string get_salt();
 

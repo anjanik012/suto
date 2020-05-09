@@ -12,8 +12,8 @@ with _TCP_ with the dedsktop on port _2021_.
 ### Message types
 
 `SUTO_C_GET_SALT` - Sent by Android client to desktop after successfull _TCP_ connection. This message requests the 
-Linux passwaord salt of the user. This is one-time only. The android client should save this for later use. This is 
-required for regenerating the password hash of the user trying to authenticate on Android client.
+Linux passwaord salt of the m_user. This is one-time only. The android client should save this for later use. This is 
+required for regenerating the password hash of the m_user trying to authenticate on Android client.
 
 `SUTO_SALT_%s` - Sent by desktop upon password salt request. _%s_ is a placeholder which will be replaced by the salt.
 

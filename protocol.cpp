@@ -10,11 +10,13 @@
 using std::string;
 using namespace boost::asio;
 
-protocol::protocol() : steps(), m_authenticator() {
+protocol::protocol(void *user) : steps(), m_authenticator(user) {
     steps.push(GET_FHASH);
     steps.push(GET_RSALT);
     steps.push(GET_SALT);
     m_socket = nullptr;
+    m_user_to_auth = user;
+    m_callback = nullptr;
     read_buffer.resize(200);
 }
 

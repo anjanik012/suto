@@ -2,7 +2,7 @@ import socket
 import time
 import crypt
 
-password = "shailesh"
+password = input("Enter your password:")
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
                        socket.IPPROTO_UDP)  # UDP

@@ -3,12 +3,14 @@
 //
 
 #include "authenticator.h"
+#include <boost/algorithm/string/find.hpp>
 
-authenticator::authenticator() : m_random_salt() {
-    password_salt = "$6$covunfW1Qv6z7AfS";
+authenticator::authenticator(void *user) : m_random_salt() {
+    m_user = (struct spwd *)user;
+    password_hash = std::string(m_user->sp_pwdp);
+    auto r = boost::find_nth(password_hash, "$", 2);
+    password_salt = std::string(password_hash.begin(), r.begin());
     random_salt_str = "$6$" + m_random_salt.get_salt(16);
-    auto hash = crypt("shailesh", password_salt.c_str());
-    password_hash = std::string(hash);
 }
 
 bool authenticator::check_hash(const std::string &received_hash) {

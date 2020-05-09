@@ -48,13 +48,16 @@ private:
     bool is_auth_success = false;
 
     void on_auth_complete() override;
+
+    void *user_to_auth = nullptr;
 public:
-    explicit fast_connection(io_service &);
+    explicit fast_connection(io_service &, void *);
 
     void start();
 
     void stop();
 
+    void set_user_to_auth(void *);
     bool get_auth_status();
 };
 
