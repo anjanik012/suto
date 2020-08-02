@@ -1,11 +1,14 @@
 # suto - sudo touch
 
-suto is a Linux PAM authenticator using Android phone fingerprint over local network.
+suto is a Linux PAM authenticator which uses Android phone biometrics to verify user credentials for granting super-user
+access.
 
 This repository is hosting the desktop module to be called by Linux PAM for authentication written in C++. Networking is
 done by **Boost.Asio** library.
 
-**This is largely work in progress.**
+### Dependencies
+
+* _Boost C++ v1.42.0_
 
 ### Work done
 
