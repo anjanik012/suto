@@ -3,6 +3,8 @@
 suto is a Linux PAM authenticator which uses Android phone biometrics to verify user credentials for granting super-user
 access.
 
+![demo](demo.gif)
+
 This repository is hosting the desktop module to be called by Linux PAM for authentication written in C++. 
 Networking is done by **Boost.Asio** library.
 
@@ -10,12 +12,13 @@ Networking is done by **Boost.Asio** library.
 
 This module makes _UDP_ broadcasts. The clients can reply back by opening a _TCP_ channel
 with it and exchange messages according our defined protocol. After auth, this module returns
-__PAM_OK__ else __PAM_FAILED__. For detailed info on our protocol see [PROTOCOL.md](PROTOCOL.md)
+__PAM_SUCCESS__ or __PAM_AUTH_ERROR__ depending upon the result of authentication. For detailed 
+info on our protocol see [PROTOCOL.md](PROTOCOL.md)
 
 ### Dependencies
 
-* _Boost C++ v1.42.0_
-* _Cmake v3.16_
+* _Boost C++ v1.42.0_ or later
+* _Cmake v3.16_ or later
 
 ### Installation
 
