@@ -13,7 +13,7 @@ Networking is done by **Boost.Asio** library.
 This module makes _UDP_ broadcasts. The clients can reply back by opening a _TCP_ channel
 with it and exchange messages according our defined protocol. After auth, this module returns
 __PAM_SUCCESS__ or __PAM_AUTH_ERROR__ depending upon the result of authentication. For detailed 
-info on our protocol see [PROTOCOL.md](PROTOCOL.md)
+info on our protocol see [PROTOCOL.md](src/protocol/PROTOCOL.md)
 
 ### Dependencies
 
