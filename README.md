@@ -29,7 +29,7 @@ mkdir build
 cmake -B build/
 cd build
 make
-sudo cp libsuto_pam.so /usr/lib/security
+sudo cp src/libsuto_pam.so /usr/lib/security
 ```
 
 After placing the module in the right place for Linux to call, we need to tell
