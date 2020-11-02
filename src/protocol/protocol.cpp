@@ -24,9 +24,8 @@ using std::string;
 using namespace boost::asio;
 
 protocol::protocol(void *user) : steps(), m_authenticator(user) {
-    steps.push(GET_FHASH);
-    steps.push(GET_RSALT);
-    steps.push(GET_SALT);
+    steps.push({GET_FHASH, GET_FHASH});
+    steps.push({GET_SALTA, GET_RSALT});
     m_socket = nullptr;
     m_user_to_auth = user;
     m_callback = nullptr;
@@ -36,9 +35,9 @@ protocol::protocol(void *user) : steps(), m_authenticator(user) {
 void protocol::start_auth_job() {
     bool read_status = start_read();
     if (read_status) {
-        std::cout << "PROTOCOL: Waiting for message" << std::endl;
+        std::cout << "PROTOCOL: Waiting for message\n";
     } else {
-        std::cout << "PROTOCOL: Can't read :(" << std::endl;
+        std::cout << "PROTOCOL: Can't read :(\n";
     }
 }
 
@@ -63,41 +62,50 @@ void protocol::read_handler(const boost::system::error_code &ec, std::size_t byt
                                                     (c != '$');
                                          }),
                           read_buffer.end());
-        std::cout << "PROTOCOL: message received:-" << read_buffer << std::endl;
+        std::cout << "PROTOCOL: message received:-" << read_buffer << '\n';
         if (!steps.empty()) {
-            if (validate_msg() && (read_buffer.find(GET_FHASH) == string::npos)) {
-                std::cout << "PROTOCOL: Message validated...sending reply" << std::endl;
-                start_write();
-            } else if (read_buffer.find(GET_FHASH) != string::npos) {
-                auto hash = std::string(read_buffer.begin() + GET_FHASH.length() + 1, read_buffer.end());
-                std::cout << "PROTOCOL: Final hash received:- " << hash << std::endl;
-                bool auth_res = m_authenticator.check_hash(hash);
-                if (auth_res) {
-                    std::cout << "PROTOCOL: Authentication complete :)" << std::endl;
-                    send_auth_msg(true);
-                } else {
-                    std::cerr << "PROTOCOL: Authentication failed :(" << std::endl;
-                    send_auth_msg(false);
-                }
-            } else {
-                std::cerr << "PROTOCOL: Unknown message received...stopping :|" << std::endl;
+            auto msg_t = validate_msg();
+            switch (msg_t) {
+                case INVALID_TYPE:
+                    std::cerr << "Unkown message type received, aborting :|\n";
+                    break;
+                case SALTA:
+                    start_write(SALTA);
+                    break;
+                case RSALT:
+                    start_write(RSALT);
+                    break;
+                case FHASH:
+                    auto hash = std::string(read_buffer.begin() + GET_FHASH.length() + 1, read_buffer.end());
+                    std::cout << "PROTOCOL: Final hash received:- " << hash << '\n';
+                    bool auth_res = m_authenticator.check_hash(hash);
+                    if (auth_res) {
+                        std::cout << "PROTOCOL: Authentication complete :)\n";
+                        send_auth_msg(true);
+                    } else {
+                        std::cerr << "PROTOCOL: Authentication failed :(\n";
+                        send_auth_msg(false);
+                    }
+                    break;
             }
         }
     } else {
-        std::cerr << "PROTOCOL: read failed :|" << std::endl;
+        std::cerr << "PROTOCOL: read failed :|\n";
     }
 }
 
-bool protocol::start_write() {
+bool protocol::start_write(int type) {
     try {
         string reply;
-        if (read_buffer == GET_SALT) {
-            reply = "SUTO_SALT_";
-            reply += m_authenticator.get_salt();
-        } else if (read_buffer == GET_RSALT) {
-            reply = "SUTO_RSALT_";
-            reply += m_authenticator.get_random_salt();
+        switch (type) {
+            case SALTA:
+                reply = "SUTO_SALTA_" + m_authenticator.get_salt() + "_" + m_authenticator.get_random_salt();
+                break;
+            case RSALT:
+                reply = "SUTO_RSALT_" + m_authenticator.get_random_salt();
+                break;
         }
+        std::cout << "PROTOCOL: Sending reply:- " << reply << '\n';
         m_socket->async_write_some(buffer(reply), boost::bind(
                 &protocol::write_handler, this,
                 placeholders::error,
@@ -110,21 +118,27 @@ bool protocol::start_write() {
 
 void protocol::write_handler(const boost::system::error_code &ec, std::size_t bytes) {
     if (!ec) {
-        std::cout << "PROTOCOL: Messgage sent :)...Waiting for next message" << std::endl;
+        std::cout << "PROTOCOL: Messgage sent :)...Waiting for next message\n";
         start_read();
     } else {
-        std::cerr << "PROTOCOL: Failed sending message :(" << std::endl;
+        std::cerr << "PROTOCOL: Failed sending message :(\n";
     }
 }
 
-bool protocol::validate_msg() {
-    bool ans = false;
-    string step;
+int protocol::validate_msg() {
+    pair<string, string> step;
     steps.pop(step);
-    if (read_buffer.find(step) != string::npos) {
-        ans = true;
+    auto f_first = read_buffer.find(step.first);
+    if(f_first != string::npos) {
+        if(step.first == GET_SALTA) {
+            return SALTA;
+        } else {
+            return FHASH;
+        }
+    } else if(read_buffer.find(step.second) != string::npos) {
+        return RSALT;
     }
-    return ans;
+    return INVALID_TYPE;
 }
 
 bool protocol::set_tcp_socket(tcp::socket *socket) {
@@ -151,13 +165,13 @@ void protocol::send_auth_msg(bool auth_type) {
     }
     if (!ec) {
         if (auth_type) {
-            std::cout << "PROTOCOL: Sent " << AUTH_SUCCESS << std::endl;
+            std::cout << "PROTOCOL: Sent " << AUTH_SUCCESS << '\n';
             m_callback->on_auth_complete();
         } else {
-            std::cout << "PROTOCOL: Sent " << AUTH_FAILED << std::endl;
+            std::cout << "PROTOCOL: Sent " << AUTH_FAILED << '\n';
         }
     } else {
-        std::cerr << "PROTOCOL: Failed to sent auth message...something went wrong" << std::endl;
+        std::cerr << "PROTOCOL: Failed to sent auth message...something went wrong\n";
     }
     m_socket->close();
 }

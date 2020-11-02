@@ -40,6 +40,7 @@ private:
     static const int TCP_LISTEN_PORT = 2021;
 
     static const std::string UDP_HELLO;
+    std::string hello_msg;
 
     udp::socket broadcast_socket;
     udp::endpoint broadcast_addr;
@@ -62,7 +63,7 @@ private:
 
     void on_auth_complete() override;
 
-    void *user_to_auth = nullptr;
+    struct spwd *user_to_auth = nullptr;
 public:
     explicit fast_connection(io_service &, void *);
 
@@ -70,7 +71,7 @@ public:
 
     void stop();
 
-    void set_user_to_auth(void *);
+//    void set_user_to_auth(void *);
     bool get_auth_status();
 };
 

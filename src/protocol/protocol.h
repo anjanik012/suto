@@ -30,16 +30,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 using namespace boost::lockfree;
 using namespace boost::asio::ip;
 using std::string;
+using std::pair;
 
 class protocol {
 private:
-    stack<string, capacity<10>> steps;
-    const string GET_SALT = "SUTO_C_GET_SALT";
+    stack<pair<string, string>, capacity<5>> steps;
+    const string GET_SALTA = "SUTO_C_GET_SALTA";
     const string GET_RSALT = "SUTO_C_GET_RSALT";
-    const string GET_FHASH = "SUTO_C_F_HASH";
+    const string GET_FHASH = "SUTO_CF_HASH";
 
-    const string AUTH_SUCCESS = "SUTO_AUTH_SUCCESS";
-    const string AUTH_FAILED = "SUTO_AUTH_FAILED";
+    const string AUTH_SUCCESS = "SUTO_AUTH_1";
+    const string AUTH_FAILED = "SUTO_AUTH_0";
+
+    enum  MESSAGE_TYPE{
+        INVALID_TYPE = -1, SALTA = 0, RSALT = 1, FHASH = 2
+    };
 
     string read_buffer;
 
@@ -50,13 +55,13 @@ private:
 
     bool start_read();
 
-    bool start_write();
+    bool start_write(int);
 
     void read_handler(const boost::system::error_code &, std::size_t);
 
     void write_handler(const boost::system::error_code &, std::size_t);
 
-    bool validate_msg();
+    int validate_msg();
 
     void send_auth_msg(bool);
 
