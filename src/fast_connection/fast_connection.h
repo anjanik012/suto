@@ -27,8 +27,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio/deadline_timer.hpp>
 
+#include<unistd.h>
+
 #include "protocol.h"
 #include "auth_complete_callback.h"
+
+#define HOSTNAME_MAX_LENGTH 254
+#define BROADCAST_LIMIT 2
 
 using namespace boost::asio;
 using namespace boost::asio::ip;
@@ -41,6 +46,8 @@ private:
 
     static const std::string UDP_HELLO;
     std::string hello_msg;
+    char m_hostname[HOSTNAME_MAX_LENGTH];
+    int m_broadcast_num = 0;
 
     udp::socket broadcast_socket;
     udp::endpoint broadcast_addr;
@@ -52,8 +59,10 @@ private:
     tcp::socket m_socket;
     tcp::endpoint listener_endpoint;
     tcp::acceptor acceptor;
+    deadline_timer m_tcp_clock;
 
     bool listen_for_tcp();
+    void tcp_timeout(const boost::system::error_code &);
 
     void tcp_connection_established(const boost::system::error_code &);
 
@@ -69,7 +78,7 @@ public:
 
     void start();
 
-    void stop();
+    void stop_broadcast();
 
 //    void set_user_to_auth(void *);
     bool get_auth_status();
