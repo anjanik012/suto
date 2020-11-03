@@ -17,6 +17,8 @@ client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 client.bind(("", 2020))
 while True:
     data, addr = client.recvfrom(1024)
+    print("Auth Request from {}".format(data.decode()[5:-1]))
+    username = data.decode()[5:].split("@")[0]
     ip_addr = addr[0]
     break
 
@@ -47,7 +49,7 @@ try:
     # print("Sent SUTO_C_GET_RSALT")
     # rsalt = sock.recv(102400)[11:].decode("utf-8")
     # print(f"Received rsalt:{rsalt}")
-    password = input("Enter your password:")
+    password = input("Enter password for {}:".format(username))
     linuxpwhash = crypt.crypt(password, salt=lsalt)
     print(f"linux hash is {linuxpwhash}")
     phash = crypt.crypt(linuxpwhash, salt=random_salt)
