@@ -2,7 +2,6 @@ import socket
 import time
 import crypt
 
-password = input("Enter your password:")
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
                        socket.IPPROTO_UDP)  # UDP
@@ -48,6 +47,7 @@ try:
     # print("Sent SUTO_C_GET_RSALT")
     # rsalt = sock.recv(102400)[11:].decode("utf-8")
     # print(f"Received rsalt:{rsalt}")
+    password = input("Enter your password:")
     linuxpwhash = crypt.crypt(password, salt=lsalt)
     print(f"linux hash is {linuxpwhash}")
     phash = crypt.crypt(linuxpwhash, salt=random_salt)
