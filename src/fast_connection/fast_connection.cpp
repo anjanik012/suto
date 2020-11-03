@@ -19,17 +19,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <iostream>
 
-const std::string fast_connection::UDP_HELLO = "SUTO_HELLO_";
+const std::string fast_connection::UDP_HELLO = "SUTO_";
 
 fast_connection::fast_connection(io_service &serv, void *user) :
         service(serv), broadcast_socket(serv),
         m_socket(serv),
         acceptor(serv, tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT)),
+        m_tcp_clock(serv, boost::posix_time::seconds(4)),
         p(user){
     broadcast_addr = udp::endpoint(network_v4().broadcast(), UDP_BROADCAST_PORT);
     listener_endpoint = tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT);
     user_to_auth = (struct spwd *)user;
-    hello_msg = UDP_HELLO + string(user_to_auth->sp_namp);
+    gethostname(m_hostname, HOSTNAME_MAX_LENGTH);
+    hello_msg = UDP_HELLO + user_to_auth->sp_namp + '@' + m_hostname + '$';
 }
 
 void fast_connection::start() {
@@ -37,7 +39,11 @@ void fast_connection::start() {
     broadcast_socket.set_option(udp::socket::reuse_address(true));
     broadcast_socket.set_option(socket_base::broadcast(true));
     send_broadcast();
-    listen_for_tcp();
+    auto tcp_result = listen_for_tcp();
+    if(tcp_result) {
+        m_tcp_clock.async_wait(boost::bind(&fast_connection::tcp_timeout, this,
+                                             boost::asio::placeholders::error));
+    }
     service.run();
 }
 
@@ -56,10 +62,13 @@ bool fast_connection::send_broadcast() {
 
 void fast_connection::broadcast_handle(const boost::system::error_code &ec, std::size_t bytes_transferred) {
     if (!ec) {
+        m_broadcast_num++;
         std::cout << "UDP: Sent Broadcast with message:-" << hello_msg << '\n';
-        deadline_timer timer(service, boost::posix_time::seconds(3));
+        deadline_timer timer(service, boost::posix_time::seconds(2));
         timer.wait();
-        send_broadcast();
+        if(m_broadcast_num != BROADCAST_LIMIT) {
+            send_broadcast();
+        }
     }
 }
 
@@ -74,9 +83,19 @@ bool fast_connection::listen_for_tcp() {
     return true;
 }
 
+void fast_connection::tcp_timeout(const boost::system::error_code &ec) {
+    if(!ec) {
+        if(!m_socket.is_open()) {
+            acceptor.close();
+            std::cerr << "UDP: No reply received for broadcasts... Aborting :(\n";
+        }
+    }
+}
+
 void fast_connection::tcp_connection_established(const boost::system::error_code &ec) {
     if (!ec) {
-        stop();
+        m_tcp_clock.cancel();
+        stop_broadcast();
         std::cout << "TCP: Connection established with:-" << m_socket.remote_endpoint().address().to_string() << '\n';
         if (p.set_tcp_socket(&m_socket)) {
             std::cout << "TCP: Socket passed to protocol for further processing\n";
@@ -88,7 +107,7 @@ void fast_connection::tcp_connection_established(const boost::system::error_code
     }
 }
 
-void fast_connection::stop() {
+void fast_connection::stop_broadcast() {
     broadcast_socket.close();
 //    m_socket.close();
 }
