@@ -16,6 +16,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "authenticator.h"
+#include "logger.h"
 #include <boost/algorithm/string/find.hpp>
 
 authenticator::authenticator(void *user) : m_random_salt() {
@@ -29,7 +30,7 @@ authenticator::authenticator(void *user) : m_random_salt() {
 bool authenticator::check_hash(const std::string &received_hash) {
     auto hash_2 = crypt(password_hash.c_str(), random_salt_str.c_str());
     auto hash_2_str = std::string(hash_2);
-    std::cout << "AUTHENTICATOR: recalculated hash:- " << hash_2_str << std::endl;
+    BOOST_LOG_TRIVIAL(trace) << "AUTHENTICATOR: recalculated hash:- " << hash_2_str;
     return hash_2_str == received_hash;
 }
 

@@ -32,6 +32,18 @@ make
 sudo cp src/libsuto_pam.so /usr/lib/security
 ```
 
+### Installation with Debug messages
+
+```sh
+git clone https://github.com/anjanik012/suto.git
+cd suto
+mkdir build
+cmake -B build/ -Dlogging=1
+cd build
+make
+sudo cp src/libsuto_pam.so /usr/lib/security
+```
+
 After placing the module in the right place for Linux to call, we need to tell
 PAM applications to call our module before the system default module.
 

@@ -23,16 +23,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <boost/asio/io_service.hpp>
 
 #include "fast_connection.h"
+#include "logger.h"
 
 using boost::asio::io_service;
 
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv) {
     return PAM_SUCCESS;
 }
-
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv) {
+    logger_init();
     int retval;
-
     const char *p_username;
     retval = pam_get_user(pamh, &p_username, "Username: ");
     struct spwd *pam_user = getspnam(p_username);
@@ -46,8 +46,10 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
     m_connection.start();
     if (m_connection.get_auth_status()) {
         retval = PAM_SUCCESS;
+        std::cout<<"Auth Success\n";
     } else {
         retval = PAM_AUTH_ERR;
+        std::cout<<"Auth Failed\n";
     }
     return retval;
 }
