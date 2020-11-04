@@ -16,6 +16,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "fast_connection.h"
+#include "logger.h"
 
 #include <iostream>
 
@@ -38,6 +39,7 @@ void fast_connection::start() {
     broadcast_socket.open(udp::v4());
     broadcast_socket.set_option(udp::socket::reuse_address(true));
     broadcast_socket.set_option(socket_base::broadcast(true));
+    std::cout<<"Waiting for Remote Authentication, Please authorize on your Device.\n";
     send_broadcast();
     auto tcp_result = listen_for_tcp();
     if(tcp_result) {
@@ -63,7 +65,7 @@ bool fast_connection::send_broadcast() {
 void fast_connection::broadcast_handle(const boost::system::error_code &ec, std::size_t bytes_transferred) {
     if (!ec) {
         m_broadcast_num++;
-        std::cout << "UDP: Sent Broadcast with message:-" << hello_msg << '\n';
+        BOOST_LOG_TRIVIAL(debug) << "UDP: Sent Broadcast with message:-" << hello_msg;
         deadline_timer timer(service, boost::posix_time::seconds(2));
         timer.wait();
         if(m_broadcast_num != BROADCAST_LIMIT) {
@@ -87,7 +89,7 @@ void fast_connection::tcp_timeout(const boost::system::error_code &ec) {
     if(!ec) {
         if(!m_socket.is_open()) {
             acceptor.close();
-            std::cerr << "UDP: No reply received for broadcasts... Aborting :(\n";
+            BOOST_LOG_TRIVIAL(fatal) << "UDP: No reply received for broadcasts... Aborting :(";
         }
     }
 }
@@ -96,11 +98,11 @@ void fast_connection::tcp_connection_established(const boost::system::error_code
     if (!ec) {
         m_tcp_clock.cancel();
         stop_broadcast();
-        std::cout << "TCP: Connection established with:-" << m_socket.remote_endpoint().address().to_string() << '\n';
+        BOOST_LOG_TRIVIAL(debug) << "TCP: Connection established with:-" << m_socket.remote_endpoint().address().to_string();
         if (p.set_tcp_socket(&m_socket)) {
-            std::cout << "TCP: Socket passed to protocol for further processing\n";
+            BOOST_LOG_TRIVIAL(debug) << "TCP: Socket passed to protocol for further processing";
         } else {
-            std::cerr << "TCP: oops!!! socket got closed somehow :(\n";
+            BOOST_LOG_TRIVIAL(error) << "TCP: oops!!! socket got closed somehow :(";
         }
         p.set_auth_completion_callback(this);
         p.start_auth_job();

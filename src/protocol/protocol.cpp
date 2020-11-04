@@ -16,6 +16,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include "protocol.h"
+#include "logger.h"
 
 #include <iostream>
 #include <algorithm>
@@ -35,9 +36,9 @@ protocol::protocol(void *user) : steps(), m_authenticator(user) {
 void protocol::start_auth_job() {
     bool read_status = start_read();
     if (read_status) {
-        std::cout << "PROTOCOL: Waiting for message\n";
+        BOOST_LOG_TRIVIAL(debug) << "PROTOCOL: Waiting for message";
     } else {
-        std::cout << "PROTOCOL: Can't read :(\n";
+        BOOST_LOG_TRIVIAL(error) << "PROTOCOL: Can't read :(";
     }
 }
 
@@ -62,12 +63,12 @@ void protocol::read_handler(const boost::system::error_code &ec, std::size_t byt
                                                     (c != '$');
                                          }),
                           read_buffer.end());
-        std::cout << "PROTOCOL: message received:-" << read_buffer << '\n';
+        BOOST_LOG_TRIVIAL(trace) << "PROTOCOL: message received:-" << read_buffer;
         if (!steps.empty()) {
             auto msg_t = validate_msg();
             switch (msg_t) {
                 case INVALID_TYPE:
-                    std::cerr << "Unkown message type received, aborting :|\n";
+                    BOOST_LOG_TRIVIAL(fatal) << "Unkown message type received, aborting :|";
                     break;
                 case SALTA:
                     start_write(SALTA);
@@ -77,20 +78,20 @@ void protocol::read_handler(const boost::system::error_code &ec, std::size_t byt
                     break;
                 case FHASH:
                     auto hash = std::string(read_buffer.begin() + GET_FHASH.length() + 1, read_buffer.end());
-                    std::cout << "PROTOCOL: Final hash received:- " << hash << '\n';
+                    BOOST_LOG_TRIVIAL(trace) << "PROTOCOL: Final hash received:- " << hash;
                     bool auth_res = m_authenticator.check_hash(hash);
                     if (auth_res) {
-                        std::cout << "PROTOCOL: Authentication complete :)\n";
+                        BOOST_LOG_TRIVIAL(debug) << "PROTOCOL: Authentication complete :)";
                         send_auth_msg(true);
                     } else {
-                        std::cerr << "PROTOCOL: Authentication failed :(\n";
+                        BOOST_LOG_TRIVIAL(debug) << "PROTOCOL: Authentication failed :(";
                         send_auth_msg(false);
                     }
                     break;
             }
         }
     } else {
-        std::cerr << "PROTOCOL: read failed :|\n";
+        BOOST_LOG_TRIVIAL(error) << "PROTOCOL: read failed :|";
     }
 }
 
@@ -105,7 +106,7 @@ bool protocol::start_write(int type) {
                 reply = "SUTO_RSALT_" + m_authenticator.get_random_salt();
                 break;
         }
-        std::cout << "PROTOCOL: Sending reply:- " << reply << '\n';
+        BOOST_LOG_TRIVIAL(trace) << "PROTOCOL: Sending reply:- " << reply;
         m_socket->async_write_some(buffer(reply), boost::bind(
                 &protocol::write_handler, this,
                 placeholders::error,
@@ -118,10 +119,10 @@ bool protocol::start_write(int type) {
 
 void protocol::write_handler(const boost::system::error_code &ec, std::size_t bytes) {
     if (!ec) {
-        std::cout << "PROTOCOL: Messgage sent :)...Waiting for next message\n";
+        BOOST_LOG_TRIVIAL(debug) << "PROTOCOL: Messgage sent :)...Waiting for next message";
         start_read();
     } else {
-        std::cerr << "PROTOCOL: Failed sending message :(\n";
+        BOOST_LOG_TRIVIAL(fatal) << "PROTOCOL: Failed sending message :(";
     }
 }
 
@@ -165,13 +166,13 @@ void protocol::send_auth_msg(bool auth_type) {
     }
     if (!ec) {
         if (auth_type) {
-            std::cout << "PROTOCOL: Sent " << AUTH_SUCCESS << '\n';
+            BOOST_LOG_TRIVIAL(trace) << "PROTOCOL: Sent " << AUTH_SUCCESS;
             m_callback->on_auth_complete();
         } else {
-            std::cout << "PROTOCOL: Sent " << AUTH_FAILED << '\n';
+            BOOST_LOG_TRIVIAL(trace) << "PROTOCOL: Sent " << AUTH_FAILED;
         }
     } else {
-        std::cerr << "PROTOCOL: Failed to sent auth message...something went wrong\n";
+        BOOST_LOG_TRIVIAL(error) << "PROTOCOL: Failed to sent auth message...something went wrong";
     }
     m_socket->close();
 }
