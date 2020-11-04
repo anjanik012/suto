@@ -15,13 +15,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SUTO_LOGGER_H
-#define SUTO_LOGGER_H
+#include "logger.h"
 
-#include <boost/log/trivial.hpp>
-#include <boost/log/core.hpp>
-#include <boost/log/expressions.hpp>
+void logger_init() {
+#ifdef logging
+    boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::trace);
+#else
+    boost::log::core::get()->set_filter(boost::log::trivial::severity > boost::log::trivial::fatal);
+#endif //logging
+}
 
-void logger_init();
-
-#endif //SUTO_LOGGER_H
