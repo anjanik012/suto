@@ -5,6 +5,10 @@ set(CRYPT_LIB crypt)
 
 set(CMAKE_CXX_FLAGS "-fPIC -fno-stack-protector -lboost_log -lpthread -DBOOST_LOG_DYN_LINK")
 
+if(logging)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Dlogging")
+endif()
+
 add_subdirectory(authenticator)
 add_subdirectory(fast_connection)
 add_subdirectory(protocol)

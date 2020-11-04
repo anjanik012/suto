@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#define LOGLEVEL fatal
-
 #include <security/pam_appl.h>
 #include <security/pam_modules.h>
 #include <shadow.h>
@@ -30,7 +28,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 using boost::asio::io_service;
 
 void logger_init() {
-    boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::LOGLEVEL);
+#ifdef logging
+    boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::trace);
+#else
+    boost::log::core::get()->set_filter(boost::log::trivial::severity > boost::log::trivial::fatal);
+#endif //logging
+
 }
 
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv) {
