@@ -32,7 +32,7 @@ fast_connection::fast_connection(io_service &serv, void *user) :
     listener_endpoint = tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT);
     user_to_auth = (struct spwd *)user;
     gethostname(m_hostname, HOSTNAME_MAX_LENGTH);
-    hello_msg = UDP_HELLO + user_to_auth->sp_namp + '@' + m_hostname + '$';
+    hello_msg = UDP_HELLO + user_to_auth->sp_namp + '@' + m_hostname + '+';
 }
 
 void fast_connection::start() {
