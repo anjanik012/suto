@@ -66,7 +66,7 @@ To test this we have a python script in [tests/](/tests)
 * Use encrypted channels for communication
 * Clear unnecessary logging
 * Create a standalone executable which calls the module
-* Android module is Work-in-Progress
+* [Android module is Work-in-Progress](https://github.com/anjanik012/suto-android)
 
 
 
