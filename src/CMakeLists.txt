@@ -25,3 +25,5 @@ include_directories(logger)
 add_library(suto_pam SHARED suto_pam.cpp authenticator/authenticator.cpp fast_connection/fast_connection.cpp protocol/protocol.cpp random_salt/random_salt.cpp logger/logger.cpp)
 
 target_link_libraries(suto_pam ${SYS_LIBS} ${THREAD_LIB} ${RANDOM_LIB} ${CRYPT_LIB})
+
+install(TARGETS suto_pam DESTINATION lib/security)
