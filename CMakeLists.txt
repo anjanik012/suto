@@ -37,4 +37,4 @@ add_library(pam_suto SHARED
         )
 set_target_properties(pam_suto PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(pam_suto ${LIB_SYS} ${LIB_THREAD} ${LIB_RANDOM} ${LIB_CRYPT} ${LIB_LOG} ${LIB_PTHREAD})
-install(TARGETS pam_suto DESTINATION bin/security)
+install(TARGETS pam_suto DESTINATION lib/security)
