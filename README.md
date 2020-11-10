@@ -25,23 +25,19 @@ info on our protocol see [PROTOCOL.md](src/protocol/PROTOCOL.md)
 ```sh
 git clone https://github.com/anjanik012/suto.git
 cd suto
-mkdir build
-cmake -B build/
-cd build
-make
-sudo cp libpam_suto.so /usr/lib/security
+cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
+make -C build/ -j${nproc}
+sudo make -C build/ install
 ```
 
-### Installation with Debug messages
+### Installation with Debug logs enabled 
 
 ```sh
 git clone https://github.com/anjanik012/suto.git
 cd suto
-mkdir build
-cmake -B build/ -Dlogging=1
-cd build
-make
-sudo cp libpam_suto.so /usr/lib/security
+cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr' -Dlogging=1
+make -C build/ -j${nproc}
+sudo make -C build/ install
 ```
 
 After placing the module in the right place for Linux to call, we need to tell
