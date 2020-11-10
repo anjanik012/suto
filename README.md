@@ -25,9 +25,11 @@ info on our protocol see [PROTOCOL.md](src/protocol/PROTOCOL.md)
 ```sh
 git clone https://github.com/anjanik012/suto.git
 cd suto
-cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
-make -C build -j$(nproc)
-sudo make -C build install
+mkdir build
+cmake -B build/
+cd build
+make
+sudo cp libpam_suto.so /usr/lib/security
 ```
 
 ### Installation with Debug messages
@@ -35,9 +37,11 @@ sudo make -C build install
 ```sh
 git clone https://github.com/anjanik012/suto.git
 cd suto
-cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr' -Dlogging=1
-make -C build -j$(nproc)
-sudo make -C build install
+mkdir build
+cmake -B build/ -Dlogging=1
+cd build
+make
+sudo cp libpam_suto.so /usr/lib/security
 ```
 
 After placing the module in the right place for Linux to call, we need to tell
@@ -51,7 +55,7 @@ I'm choosing `su`.
 
 Add a line 
 
-`auth sufficient libsuto_pam.so`
+`auth sufficient libpam_suto.so`
 
 Now whenever you run `su` our PAM module will be called for authentication.
 
