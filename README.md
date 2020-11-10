@@ -55,7 +55,7 @@ I'm choosing `su`.
 
 Add a line 
 
-`auth sufficient libsuto_pam.so`
+`auth sufficient libpam_suto.so`
 
 Now whenever you run `su` our PAM module will be called for authentication.
 
