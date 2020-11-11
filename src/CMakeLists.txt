@@ -10,5 +10,6 @@ include_directories(authenticator)
 include_directories(auth_callback)
 include_directories(random_salt)
 include_directories(logger)
+include_directories(${PROJECT_BINARY_DIR}/src)
 
 add_library(suto_pam OBJECT suto_pam.cpp)

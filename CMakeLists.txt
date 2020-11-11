@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.13)
-project(suto C CXX)
+project(suto LANGUAGES C CXX)
+
+# Set version
+set(suto_VERSION_MAJOR 1)
+set(suto_VERSION_MINOR 4)
+set(suto_VERSION_REVISION 0)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -35,6 +40,7 @@ add_library(pam_suto SHARED
         $<TARGET_OBJECTS:random_salt>
         $<TARGET_OBJECTS:logger>
         )
+configure_file(src/suto_version.h.in src/suto_version.h)
 set_target_properties(pam_suto PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(pam_suto ${LIB_SYS} ${LIB_THREAD} ${LIB_RANDOM} ${LIB_CRYPT} ${LIB_LOG} ${LIB_PTHREAD})
 install(TARGETS pam_suto DESTINATION lib/security)

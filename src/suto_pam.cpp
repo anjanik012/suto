@@ -24,6 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "fast_connection.h"
 #include "logger.h"
+#include "suto_version.h"
 
 using boost::asio::io_service;
 
@@ -35,21 +36,24 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
     int retval;
     const char *p_username;
     retval = pam_get_user(pamh, &p_username, "Username: ");
-    struct spwd *pam_user = getspnam(p_username);
-
     if (retval != PAM_SUCCESS) {
         return retval;
     }
-
+    struct spwd *pam_user = getspnam(p_username);
+    std::cout << "SUTO Version: "
+        << suto_VERSION_MAJOR << "."
+        << suto_VERSION_MINOR << "."
+        << suto_VERSION_REVISION << '\n';
+    std::cout << "User: " << p_username << '\n';
     io_service service;
     fast_connection m_connection(service, pam_user);
     m_connection.start();
     if (m_connection.get_auth_status()) {
         retval = PAM_SUCCESS;
-        std::cout<<"Auth Success\n";
+        std::cout<<"Authorization Successful\n";
     } else {
         retval = PAM_AUTH_ERR;
-        std::cout<<"Auth Failed\n";
+        std::cout<<"Authorization Failed\n";
     }
     return retval;
 }

@@ -1,0 +1,3 @@
+#define suto_VERSION_MAJOR @suto_VERSION_MAJOR@
+#define suto_VERSION_MINOR @suto_VERSION_MINOR@
+#define suto_VERSION_REVISION @suto_VERSION_REVISION@
