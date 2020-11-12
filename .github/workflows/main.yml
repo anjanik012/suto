@@ -6,7 +6,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Installing Dependencies
-        run: sudo apt-get install -y libboost-all-dev libboost-dev cmake gcc libpam0g-dev
+        run: |
+            sudo add-apt-repository ppa:mhier/libboost-latest
+            sudo apt-get update
+            sudo apt-get install -y libboost libboost cmake gcc libpam0g-dev
       - name: Building
         run: |
             cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
