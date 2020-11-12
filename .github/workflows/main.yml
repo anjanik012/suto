@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Prepare
-        run: sudo apt-get install -y libboost-all-dev cmake gcc libboost-all-dev
+        run: sudo apt-get install -y libboost-all-dev cmake gcc libpam0g-dev
       - name: Build
         run: |
             cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
