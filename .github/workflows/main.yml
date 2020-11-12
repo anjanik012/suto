@@ -5,12 +5,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Prepare
-        run: sudo apt-get install -y libboost-all-dev cmake gcc libpam0g-dev
-      - name: Build
+      - name: Installing Dependencies
+        run: sudo apt-get install -y libboost-all-dev libboost-dev cmake gcc libpam0g-dev
+      - name: Building
         run: |
             cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
             make -C build/ -j${nproc}
-      - name: Install
+      - name: Installing
         run: |
             sudo make -C build/ install
