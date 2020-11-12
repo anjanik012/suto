@@ -17,8 +17,8 @@ info on our protocol see [PROTOCOL.md](src/protocol/PROTOCOL.md)
 
 ### Dependencies
 
-* _Boost C++ v1.42.0_ or later
-* _Cmake v3.16_ or later
+* _Boost C++ v1.67.0_ or later
+* _Cmake v3.13_ or later
 
 ### Installation
 
