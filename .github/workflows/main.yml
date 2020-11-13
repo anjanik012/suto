@@ -5,6 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
       - name: Installing Dependencies
         run: |
             sudo add-apt-repository ppa:mhier/libboost-latest -y
@@ -17,3 +20,9 @@ jobs:
       - name: Installing
         run: |
             sudo make -C build/ install
+      - name: Testing
+        run: |
+            python3 tests/automated/test_1_remote.py &
+            ./tests/automated/test_1.sh
+
+
