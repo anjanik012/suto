@@ -23,7 +23,7 @@ jobs:
       - name: Testing
         run: |
             sudo su -c "echo #{USER}"
-            python3 tests/automated/test_1_remote.py &
-            sudo su -c "./tests/automated/test_1.sh"
+#             python3 tests/automated/test_1_remote.py &
+#             sudo su -c "./tests/automated/test_1.sh"
 
 
