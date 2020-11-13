@@ -5,5 +5,5 @@ sudo useradd -m -g users -s /bin/bash test_user
 # sudo echo "test_user:test_pass"|sudo chpasswd
 echo -e "test_pass\ntest_pass" |sudo passwd test_user
 python3 tests/automated/test_1_remote.py &
-./su-exec test_user ls
+./su-exec/su-exec test_user ls
 exit $?
