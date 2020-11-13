@@ -11,6 +11,7 @@ jobs:
           python-version: '3.8'
       - name: Installing Dependencies
         run: |
+            apt-get update -y
             apt-get install software-properties-common
             add-apt-repository ppa:mhier/libboost-latest -y
             apt-get update -y
