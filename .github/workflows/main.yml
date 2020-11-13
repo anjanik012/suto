@@ -16,10 +16,6 @@ jobs:
             sudo add-apt-repository ppa:mhier/libboost-latest -y
             sudo apt-get update -y
             sudo apt-get install -y libboost1.74-dev cmake g++ libpam0g-dev -y
-            git clone https://github.com/ncopa/su-exec.git
-            cd su-exec
-            make
-            # sudo mv ./su-exec /usr/bin/su-exec
       - name: Building
         run: |
             cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
