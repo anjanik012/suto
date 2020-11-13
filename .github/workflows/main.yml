@@ -9,7 +9,7 @@ jobs:
         run: |
             sudo add-apt-repository ppa:mhier/libboost-latest -y
             sudo apt-get update -y
-            sudo apt-get install -y libboost1.74 cmake gcc libpam0g-dev
+            sudo apt-get install -y libboost1.74-dev cmake gcc libpam0g-dev
       - name: Building
         run: |
             cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
