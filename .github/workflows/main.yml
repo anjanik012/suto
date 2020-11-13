@@ -12,7 +12,7 @@ jobs:
         run: |
             sudo add-apt-repository ppa:mhier/libboost-latest -y
             sudo apt-get update -y
-            sudo apt-get install -y libboost1.74-dev cmake gcc libpam0g-dev
+            sudo apt-get install -y libboost1.74-dev cmake gcc libpam0g-dev > /dev/null
       - name: Building
         run: |
             cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
@@ -22,8 +22,7 @@ jobs:
             sudo make -C build/ install
       - name: Testing
         run: |
-            sudo su
             python3 tests/automated/test_1_remote.py &
-            ./tests/automated/test_1.sh
+            sudo su -c "./tests/automated/test_1.sh"
 
 
