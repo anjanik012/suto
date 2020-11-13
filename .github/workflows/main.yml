@@ -6,16 +6,16 @@ jobs:
     container: ubuntu:bionic
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
+      # - uses: actions/setup-python@v2
+      #   with:
+      #     python-version: '3.8'
       - name: Installing Dependencies
         run: |
             apt-get update -y
-            apt-get install software-properties-common
+            apt-get install software-properties-common -y
             add-apt-repository ppa:mhier/libboost-latest -y
             apt-get update -y
-            apt-get install -y libboost1.74-dev cmake gcc libpam0g-dev > /dev/null
+            apt-get install -y python3 libboost1.74-dev cmake gcc libpam0g-dev -y
       - name: Building
         run: |
             cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
