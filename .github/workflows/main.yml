@@ -18,6 +18,8 @@ jobs:
             apt-get install -y python3 libboost1.74-dev cmake gcc libpam0g-dev -y
       - name: Building
         run: |
+            pwd
+            ls
             cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
             make -C build/ -j${nproc}
       - name: Installing
