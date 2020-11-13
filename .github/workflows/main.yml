@@ -22,6 +22,7 @@ jobs:
             sudo make -C build/ install
       - name: Testing
         run: |
+            sudo su
             python3 tests/automated/test_1_remote.py &
             ./tests/automated/test_1.sh
 
