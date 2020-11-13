@@ -2,6 +2,7 @@ import socket
 import time
 import crypt
 
+print("Starting...")
 TEST_PASS = "test_pass"
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM,
