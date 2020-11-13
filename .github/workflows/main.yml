@@ -11,19 +11,19 @@ jobs:
           python-version: '3.8'
       - name: Installing Dependencies
         run: |
-            sudo add-apt-repository ppa:mhier/libboost-latest -y
-            sudo apt-get update -y
-            sudo apt-get install -y libboost1.74-dev cmake gcc libpam0g-dev > /dev/null
+            add-apt-repository ppa:mhier/libboost-latest -y
+            apt-get update -y
+            apt-get install -y libboost1.74-dev cmake gcc libpam0g-dev > /dev/null
       - name: Building
         run: |
             cmake -B build/ -DCMAKE_INSTALL_PREFIX='/usr'
             make -C build/ -j${nproc}
       - name: Installing
         run: |
-            sudo make -C build/ install
+            make -C build/ install
       - name: Testing
         run: |
-            sudo su -c "echo ${USER}"
+            su -c "echo ${USER}"
 #             python3 tests/automated/test_1_remote.py &
 #             sudo su -c "./tests/automated/test_1.sh"
 
