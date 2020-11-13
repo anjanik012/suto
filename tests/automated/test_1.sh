@@ -4,7 +4,7 @@
 # sudo echo "test_user:test_pass"|sudo chpasswd
 echo -e "test_pass\ntest_pass" |sudo passwd root
 # sudo sed -i "1iauth sufficient libpam_suto.so" /etc/pam.d/sudo
-sudo echo "auth sufficient libpam_suto.so" > /etc/pam.d/sudo
+sudo bash -c "echo 'auth sufficient libpam_suto.so' > /etc/pam.d/sudo"
 python3 tests/automated/test_1_remote.py &
 sudo ls
 exit $?
