@@ -69,6 +69,7 @@ void protocol::read_handler(const boost::system::error_code &ec, std::size_t byt
             switch (msg_t) {
                 case INVALID_TYPE:
                     BOOST_LOG_TRIVIAL(fatal) << "Unkown message type received, aborting :|";
+                    m_socket->close();
                     break;
                 case SALTA:
                     start_write(SALTA);
