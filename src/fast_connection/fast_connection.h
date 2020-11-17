@@ -33,7 +33,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "auth_complete_callback.h"
 
 #define HOSTNAME_MAX_LENGTH 254
-#define BROADCAST_LIMIT 2
 
 using namespace boost::asio;
 using namespace boost::asio::ip;
@@ -47,7 +46,6 @@ private:
     static const std::string UDP_HELLO;
     std::string hello_msg;
     char m_hostname[HOSTNAME_MAX_LENGTH];
-    int m_broadcast_num = 0;
 
     udp::socket broadcast_socket;
     udp::endpoint broadcast_addr;

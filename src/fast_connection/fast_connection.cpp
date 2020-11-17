@@ -64,13 +64,8 @@ bool fast_connection::send_broadcast() {
 
 void fast_connection::broadcast_handle(const boost::system::error_code &ec, std::size_t bytes_transferred) {
     if (!ec) {
-        m_broadcast_num++;
         BOOST_LOG_TRIVIAL(debug) << "UDP: Sent Broadcast with message:-" << hello_msg;
-        deadline_timer timer(service, boost::posix_time::seconds(2));
-        timer.wait();
-        if(m_broadcast_num != BROADCAST_LIMIT) {
-            send_broadcast();
-        }
+        stop_broadcast();
     }
 }
 
@@ -89,7 +84,7 @@ void fast_connection::tcp_timeout(const boost::system::error_code &ec) {
     if(!ec) {
         if(!m_socket.is_open()) {
             acceptor.close();
-            BOOST_LOG_TRIVIAL(fatal) << "UDP: No reply received for broadcasts... Aborting :(";
+            BOOST_LOG_TRIVIAL(fatal) << "UDP: No reply received for broadcast... Aborting :(";
         }
     }
 }
@@ -97,7 +92,6 @@ void fast_connection::tcp_timeout(const boost::system::error_code &ec) {
 void fast_connection::tcp_connection_established(const boost::system::error_code &ec) {
     if (!ec) {
         m_tcp_clock.cancel();
-        stop_broadcast();
         BOOST_LOG_TRIVIAL(debug) << "TCP: Connection established with:-" << m_socket.remote_endpoint().address().to_string();
         if (p.set_tcp_socket(&m_socket)) {
             BOOST_LOG_TRIVIAL(debug) << "TCP: Socket passed to protocol for further processing";
