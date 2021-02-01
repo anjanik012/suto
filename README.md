@@ -59,6 +59,7 @@ To test this we have a python script in [tests/](/tests)
 
 ### TO-DO
 
+* Try adding a D-Bus daemon that keeps the connection alive with the device
 * Use encrypted channels for communication
 * Clear unnecessary logging
 * Create a standalone executable which calls the module
