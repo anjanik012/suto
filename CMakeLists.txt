@@ -8,7 +8,7 @@ set(suto_VERSION_REVISION 0)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(Boost 1.67.0 REQUIRED COMPONENTS system thread random log)
+find_package(Boost CONFIG 1.70.0 REQUIRED COMPONENTS system thread random log)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     link_directories(${Boost_LIBRARY_DIRS})
