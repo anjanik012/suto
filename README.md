@@ -1,5 +1,7 @@
 # suto - sudo touch
 
+**No longer works since modern distros have moved to using yescrypt hash alogorithm. We are working on new implementation.**
+
 suto is a Linux PAM authenticator which uses Android phone biometrics to verify user credentials for granting super-user
 access.
 
