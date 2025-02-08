@@ -5,7 +5,7 @@ project(suto LANGUAGES C CXX)
 set(suto_VERSION_MAJOR 1)
 set(suto_VERSION_MINOR 4)
 set(suto_VERSION_REVISION 0)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(Boost 1.67.0 REQUIRED COMPONENTS system thread random log)
