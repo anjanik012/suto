@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef SUTO_FAST_CONNECTION_H
 #define SUTO_FAST_CONNECTION_H
 
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/address_v4.hpp>
@@ -39,7 +39,7 @@ using namespace boost::asio::ip;
 
 class fast_connection : public auth_complete_callback {
 private:
-    io_service &service;
+    io_context &context;
     static const int UDP_BROADCAST_PORT = 2020;
     static const int TCP_LISTEN_PORT = 2021;
 
@@ -72,7 +72,7 @@ private:
 
     struct spwd *user_to_auth = nullptr;
 public:
-    explicit fast_connection(io_service &, void *);
+    explicit fast_connection(io_context &, void *);
 
     void start();
 

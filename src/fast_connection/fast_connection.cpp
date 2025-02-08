@@ -22,11 +22,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 const std::string fast_connection::UDP_HELLO = "SUTO_";
 
-fast_connection::fast_connection(io_service &serv, void *user) :
-        service(serv), broadcast_socket(serv),
-        m_socket(serv),
-        acceptor(serv, tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT)),
-        m_tcp_clock(serv, boost::posix_time::seconds(4)),
+fast_connection::fast_connection(io_context &context, void *user):
+        context(context), broadcast_socket(context),
+        m_socket(context),
+        acceptor(context, tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT)),
+        m_tcp_clock(context, boost::posix_time::seconds(4)),
         p(user){
     broadcast_addr = udp::endpoint(network_v4().broadcast(), UDP_BROADCAST_PORT);
     listener_endpoint = tcp::endpoint(tcp::v4(), TCP_LISTEN_PORT);
@@ -46,7 +46,7 @@ void fast_connection::start() {
         m_tcp_clock.async_wait(boost::bind(&fast_connection::tcp_timeout, this,
                                              boost::asio::placeholders::error));
     }
-    service.run();
+    context.run();
 }
 
 bool fast_connection::send_broadcast() {

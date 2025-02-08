@@ -20,13 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <shadow.h>
 
 #include <iostream>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
 
 #include "fast_connection.h"
 #include "logger.h"
 #include "suto_version.h"
 
-using boost::asio::io_service;
+using boost::asio::io_context;
 
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc, const char **argv) {
     return PAM_SUCCESS;
@@ -45,8 +45,8 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
         << suto_VERSION_MINOR << "."
         << suto_VERSION_REVISION << '\n';
     std::cout << "User: " << p_username << '\n';
-    io_service service;
-    fast_connection m_connection(service, pam_user);
+    io_context context;
+    fast_connection m_connection(context, pam_user);
     m_connection.start();
     if (m_connection.get_auth_status()) {
         retval = PAM_SUCCESS;
